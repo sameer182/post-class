@@ -27,20 +27,20 @@
         </header>
 
         <main>
-            <div v-if="showProduct">
+            <div v-for="item in products" v-if="showProduct">
                 <figure>
-                    <img v-bind:src="product.image" alt="cat food" style="max-width: 10%; height: auto;">
+                    <img v-bind:src="item.image" alt="Book pic" style="max-width: 10%; height: auto;">
                 </figure>
                 <h1>Subject</h1>
                 <span class="fa-solid fa-computer fa-2xl"></span>
-                <h3 v-text="product.title"></h3>
-                <p v-text="product.description"></p>
-                <p>Location: {{product.location}}</p>
-                <p>Seats: {{product.spaces}}</p>
-                <p>Price: £{{product.price}} </p>
+                <h3>{{item.title}}</h3>
+                <p>{{item.description}}</p>
+                <p>Location: {{item.location}}</p>
+                <p>Seats: {{item.availableInventory}}</p>
+                <p>Price: £{{item.price}} </p>
                 
 
-                <button v-if="canAddToCart" class="btn btn-primary" v-on:click="addItemToCart">Add to Cart</button>
+                <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Add to Cart</button>
                 <div v-else>
                     <button class="btn btn-secondary" disabled>Add to Cart</button>
                     Out of Stock
@@ -55,49 +55,39 @@
 
     </div>
    
-    <script>
-        let webstore = new Vue({
+    <script type="module">
+        import lessons from './lessons.js';
+
+        new Vue({
             el: "#app",
             data: {
                 sitename: "Bridge Course Store App",
                 showProduct: true,
-                product: 
-                    {
-                    id: 100,
-                    title: "Computer Programming",
-                    description: "A beginner's guide to our digital world",
-                    location: "Hendon",
-                    price: 200,
-                    spaces: 5,
-                    image: "pic/coding.png",
-                    availableInventory: 5
-                },
-               
-                    
-                cart: []
-            },
-            methods: {
-                showCheckout: function () {
-                    if (this.showProduct) {
-                        this.showProduct = false
-                    } else {
-                        this.showProduct = true
-                    }
-                },
-                addItemToCart: function () {
-                    this.cart.push(this.product.id);
-
-                }
-
+                products: lessons,
+            
+                     cart: [],
             },
             computed: {
                 itemsInCart: function () {
                     return this.cart.length || "";
                 },
-                canAddToCart: function () {
-                    return this.product.availableInventory > this.itemsInCart;
+            },
+                methods: {
+                showCheckout: function () {
+                    this.showProduct = !this.showProduct;
+                },
+                addItemToCart: function (item) {
+                    if (item.availableInventory >=1) {
+                    this.cart.push(item.availableInventory);
+                    item.availableInventory -= 1 ;
+                    }
+                },
+                canAddToCart: function (item) {
+                    return item.availableInventory > this.cart.filter(cartItem => cartItem.id === item.id).length;
                 }
             }
+           
+            
 
 
         })
