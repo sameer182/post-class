@@ -27,24 +27,27 @@
         </header>
 
         <main>
-            <div v-for="item in products" v-if="showProduct">
-                <figure>
-                    <img v-bind:src="item.image" alt="Book pic" style="max-width: 10%; height: auto;">
-                </figure>
-                <h1>Subject</h1>
-                <span class="fa-solid fa-computer fa-2xl"></span>
-                <h3>{{item.title}}</h3>
-                <p>{{item.description}}</p>
-                <p>Location: {{item.location}}</p>
-                <p>Seats: {{item.availableInventory}}</p>
-                <p>Price: £{{item.price}} </p>
-                
-
-                <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Add to Cart</button>
-                <div v-else>
-                    <button class="btn btn-secondary" disabled>Add to Cart</button>
-                    Out of Stock
-                </div>
+            <div class="product-container" v-if="showProduct">
+                <div v-for="item in products" class="product-box">
+                    <div>
+                        <figure >
+                            <img v-bind:src="item.image" alt="Book pic" style="max-width: 40%; height: auto;">
+                        </figure>
+                        <span class="fa-solid fa-computer fa-2xl"></span>
+                        <h4>{{item.title}}</h4>
+                        <p>{{item.description}}</p>
+                        <p>Location: {{item.location}}</p>
+                        <p>Seats: {{item.availableInventory}}</p>
+                        <p>Price: £{{item.price}} </p>
+                    
+    
+                        <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Add to Cart</button>
+                        <div v-else>
+                            <button class="btn btn-secondary" disabled>Add to Cart</button>
+                            Out of Stock
+                        </div>
+                    </div>
+                </div>    
             </div>
             <div v-else>
                 <h1>Welcome to the Checkout Page</h1>
