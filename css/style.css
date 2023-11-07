@@ -1,6 +1,14 @@
-body {
-    padding: 20px;
+* {
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Encode Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 header {
@@ -8,6 +16,15 @@ header {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    background-color: #6483b1;
+    border: 1px solid #6e9ce5;
+    width: 100%;
+}
+
+h1 {
+    padding-left: 500px;
+    text-align: center;
+
 }
 
 main {
@@ -17,16 +34,17 @@ main {
 
 button {
     margin-top: 10px;
+    margin-bottom: 5px;
 }
 
 /* Main container style */
 #app {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 100%;
+    margin: auto;
+    padding: auto;
 }
 
-/* grid container style */
+/* Define the grid container style */
 .product-container {
     width: 100%;
     display: flex;
@@ -35,12 +53,54 @@ button {
     flex-wrap: wrap;
 }
 
-/* individual product box style */
+/* Define the individual product box style */
 .product-box {
+    display: flex;
     width: 30%;
-    border: 1px solid #f8eeee;
+    border: 5px solid #606d82;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     margin-bottom: 20px;
 }
 
+
+.btn.btn-primary {
+    color: #fff;
+    border-radius: 10px;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn.btn-primary:hover {
+    color: #fff;
+    background-color: #16589f;
+    border-color: #16589f;
+}
+
+.btn.btn-primary1 {
+    color: #fff;
+    border-radius: 10px;
+    background-color: #5c5f67;
+    border-color: #060606;
+}
+
+.btn.btn-primary1:hover {
+    color: #fff;
+    background-color: #202121;
+    border-color: #545b62;
+}
+
+.btn.btn-secondary {
+    color: #fff;
+    border-radius: 10px;
+    background-color: #5c5f67;
+    border-color: #6c757d;
+}
+
+.btn.btn-secondary:hover {
+    color: #fff;
+    background-color: #202121;
+    border-color: #545b62;
+}
+
+/* ... Rest of your CSS ... */

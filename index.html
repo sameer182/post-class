@@ -4,10 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <!-- Google api fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css">
+    
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     <title>Bridge Course Store App</title>
@@ -25,6 +30,23 @@
                 <span class="fa-solid fa-cart-shopping"></span> Checkout
             </button>
         </header>
+ <!-- ... Sort button ... -->
+
+ <button class="btn btn-secondary" v-on:click="sortBy('title')">Sort by Title</button>
+ <button class="btn btn-secondary" v-on:click="sortBy('location')">Sort by Location</button>
+ <button class="btn btn-secondary" v-on:click="sortBy('price')">Sort by Price</button>
+ 
+ <!--   Sort button need some work
+
+ <div class="sort-direction-buttons">
+    <button class="btn btn-primary1" v-on:click="sortDirection('high')">
+        <span class="fa-solid fa-arrow-up fa-sm"></span></button>
+    <button class="btn btn-primary1" v-on:click="sortDirection('low')">
+        <span class="fa-solid fa-arrow-down fa-sm"></span></button>
+</div>
+
+--->
+
 
         <main>
             <div class="product-container" v-if="showProduct">
@@ -33,12 +55,11 @@
                         <figure >
                             <img v-bind:src="item.image" alt="Book pic" style="max-width: 40%; height: auto;">
                         </figure>
-                        <span class="fa-solid fa-computer fa-2xl"></span>
                         <h4>{{item.title}}</h4>
-                        <p>{{item.description}}</p>
                         <p>Location: {{item.location}}</p>
+                        <p>Price: £{{item.price}}</p>
                         <p>Seats: {{item.availableInventory}}</p>
-                        <p>Price: £{{item.price}} </p>
+                        
                     
     
                         <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Add to Cart</button>
@@ -64,7 +85,12 @@
         new Vue({
             el: "#app",
             data: {
-                sitename: "Bridge Course Store App",
+                sortDirection: {
+                    title: 1,
+                    location: 1,
+                    price: 1,
+                },
+                         sitename: "Bridge Course Store App",
                 showProduct: true,
                 products: lessons,
             
@@ -87,11 +113,25 @@
                 },
                 canAddToCart: function (item) {
                     return item.availableInventory > this.cart.filter(cartItem => cartItem.id === item.id).length;
-                }
+                },
+               
+                sortBy: function (key) {
+                        const direction = this.sortDirection[key];
+                        if (key === "title") {
+                            this.products.sort((a, b) =>
+                                (a.title > b.title ? 1 : -1) * direction
+                            );
+                        } else if (key === "location") {
+                            this.products.sort((a, b) =>
+                                (a.location > b.location ? 1 : -1) * direction
+                            );
+                        } else if (key === "price") {
+                            this.products.sort((a, b) => (a.price - b.price) * direction);
+                        }
+                        this.sortDirection[key] = -direction;
+                    },
             }
-           
-            
-
+                
 
         })
     </script>
