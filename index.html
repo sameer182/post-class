@@ -15,15 +15,14 @@
     
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
-    <title>Bridge Course Store App</title>
+    <title>Bridge Course Store app</title>
 
 </head>
 
 <body>
-
     <div id="app">
         <header>
-            <h1 v-text="sitename"></h1>
+            <h1 style="font-weight: bold" v-text="sitename"></h1>
 
             <button class="btn btn-primary" v-on:click="showCheckout">
                 {{itemsInCart}}
@@ -32,10 +31,11 @@
         </header>
  <!-- ... Sort button ... -->
 
- <button class="btn btn-secondary" v-on:click="sortBy('title')">Sort by Title</button>
- <button class="btn btn-secondary" v-on:click="sortBy('location')">Sort by Location</button>
- <button class="btn btn-secondary" v-on:click="sortBy('price')">Sort by Price</button>
- 
+ <div class="button-container" v-if="showProduct">
+    <button class="btn btn-secondary" v-on:click="sortBy('title')">Sort by Title</button>
+    <button class="btn btn-secondary" v-on:click="sortBy('location')">Sort by Location</button>
+    <button class="btn btn-secondary" v-on:click="sortBy('price')">Sort by Price</button>
+   </div>
  <!--   Sort button need some work
 
  <div class="sort-direction-buttons">
@@ -50,6 +50,7 @@
 
         <main>
             <div class="product-container" v-if="showProduct">
+                
                 <div v-for="item in products" class="product-box">
                     <div>
                         <figure >
@@ -70,11 +71,38 @@
                     </div>
                 </div>    
             </div>
+            <!-- Checkout Page -->
             <div v-else>
-                <h1>Welcome to the Checkout Page</h1>
+                <h1 class="h1">Welcome to the Checkout Page</h1>
+                <div v-for="(cartItem, index) in cartItemsWithQuantity" :key="index" class="product-box1">
+                    <div>
+                        <figure>
+                            <img v-bind:src="cartItem.item.image" alt="Book pic" style="max-width: 40%; height: auto;">
+                        </figure>
+                        <h4>{{cartItem.item.title}}</h4>
+                        <p>Location: {{cartItem.item.location}}</p>
+                        <p>Price: £{{cartItem.item.price}}</p>
+                        <p>Quantity: {{cartItem.quantity}}</p>
+                        <button class="btn btn-danger" v-on:click="removeItemFromCart(index)">Remove from Cart</button>
+                    </div>
+                </div>
+                <footer style="margin-top: 10px;">
+                    <h2><b>Enter your details below</b></h2>
+                    <form id="orderForm" @submit.prevent="submitOrder">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Enter full name" v-model="name" pattern="[A-Za-z ]+" required>
+                        <br><br>
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter phone number"v-model="phoneNumber" pattern="[0-9]{10}" required>
+                        <br><br>
+                        <button type="submit" class="btn btn-primary" :disabled="!isFormValid">Order</button>
+                    </form>
+                </footer>
             </div>
+            
 
         </main>
+        
 
 
     </div>
@@ -90,46 +118,81 @@
                     location: 1,
                     price: 1,
                 },
-                         sitename: "Bridge Course Store App",
+                sitename: "Bridge Course Store",
                 showProduct: true,
                 products: lessons,
+                name: '',
+                phoneNumber: '',
             
                      cart: [],
             },
             computed: {
+                cartItemsWithQuantity: function () {
+                    const cartItemsWithQuantity = [];
+                    this.cart.forEach((item) => {
+                        const existingItem = cartItemsWithQuantity.find((cartItem) => cartItem.item.id === item.id);
+                        if (existingItem) {
+                            existingItem.quantity++;
+                        } else {
+                            cartItemsWithQuantity.push({ item: item, quantity: 1 });
+                        }
+                    });
+                    return cartItemsWithQuantity;
+                },
                 itemsInCart: function () {
                     return this.cart.length || "";
                 },
+                isFormValid: function() {
+                const namePattern = new RegExp('[A-Za-z ]+');
+                const phonePattern = new RegExp('[0-9]{10}');
+
+                return namePattern.test(this.name) && phonePattern.test(this.phoneNumber);
+            }
             },
                 methods: {
                 showCheckout: function () {
                     this.showProduct = !this.showProduct;
                 },
                 addItemToCart: function (item) {
-                    if (item.availableInventory >=1) {
-                    this.cart.push(item.availableInventory);
-                    item.availableInventory -= 1 ;
+                    if (item.availableInventory >= 1) {
+                        this.cart.push(item);
+                        item.availableInventory -= 1;
                     }
+                },
+                removeItemFromCart: function (index) {
+                    const removedItem = this.cart.splice(index, 1)[0];
+                    removedItem.availableInventory += 1;
                 },
                 canAddToCart: function (item) {
                     return item.availableInventory > this.cart.filter(cartItem => cartItem.id === item.id).length;
                 },
-               
+
                 sortBy: function (key) {
-                        const direction = this.sortDirection[key];
-                        if (key === "title") {
-                            this.products.sort((a, b) =>
-                                (a.title > b.title ? 1 : -1) * direction
-                            );
-                        } else if (key === "location") {
-                            this.products.sort((a, b) =>
-                                (a.location > b.location ? 1 : -1) * direction
-                            );
-                        } else if (key === "price") {
-                            this.products.sort((a, b) => (a.price - b.price) * direction);
-                        }
-                        this.sortDirection[key] = -direction;
-                    },
+                    const direction = this.sortDirection[key];
+                    if (key === "title") {
+                        this.products.sort((a, b) =>
+                            (a.title > b.title ? 1 : -1) * direction
+                        );
+                    } else if (key === "location") {
+                        this.products.sort((a, b) =>
+                            (a.location > b.location ? 1 : -1) * direction
+                        );
+                    } else if (key === "price") {
+                        this.products.sort((a, b) => (a.price - b.price) * direction);
+                    }
+                    this.sortDirection[key] = -direction;
+                },
+                submitOrder: function() {
+                // Check form validity again to be safe
+                if (!this.isFormValid) {
+                    return;
+                }
+
+                // Code for submitting the order
+                // Add your logic for order submission here
+                alert('Order submitted successfully!');
+            }
+
             }
                 
 
