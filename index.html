@@ -55,7 +55,7 @@
                         <p>Price: £{{item.price}}</p>
                         <p>Seats: {{item.availableInventory}}</p>
 
-                        <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Addto Cart</button>
+                        <button v-if="canAddToCart(item)" class="btn btn-primary" v-on:click="addItemToCart(item)">Add to Cart</button>
                         <div v-else>    
                             <button class="btn btn-secondary" disabled>Add to Cart</button>
                             Out of Stock
@@ -83,13 +83,13 @@
                         <div class="input-box">
                             <label for="name">Full Name</label>
                             <input type="text" id="name" name="name" placeholder="Enter full name" v-model.trim="name" required/>
-                            <span style="color: red; font-size: 14px;" v-if="!checkInput" >Please type only characters.</span>
+                            <span style="color: red; font-size: 14px;" v-if="!checkInput" >Please enter only characters.</span>
                         </div>
                         <div class="input-box">
                             <label for="phone">Phone Number</label>
                             <input type="tel" id="phone" name="phone" placeholder="Enter phone number"
                                 v-model.trim="phoneNumber" maxlength="10" required>
-                            <span style="color: red; font-size: 14px;" v-if="!checkPhoneInput" >Please type atleast 10 numbers.</span>
+                            <span style="color: red; font-size: 14px;" v-if="!checkPhoneInput" >Please enter atleast 10 numbers.</span>
                         </div>
                         <button type="submit" @click="submitOrder" class="btn btn-primary" :disabled="!isFormValid">Order</button>
                        
@@ -146,7 +146,7 @@
                     return this.cart.length || "";
                 },
                 checkInput: function () {
-                    const namePattern = /^[a-zA-Z]+$/;
+                    const namePattern = /^[a-zA-Z ]+$/;
                     return namePattern.test(this.name);
                 },
                 checkPhoneInput: function () {
@@ -172,7 +172,7 @@
                     }
                 },
                 removeItemFromCart: function (index) {
-                    const removedItem = this.cart.splice(index, 1);
+                    const removedItem = this.cart.splice(index, 1)[0];
                     removedItem.availableInventory += 1;
                     if (this.cart.length == 0){
                         this.showProduct = true;
@@ -204,13 +204,9 @@
 
                 },
                 submitOrder: function () {
-                    // Check form validity again to be safe
                     if (this.isFormValid) {
-                        // Show order confirmation
-                        alert('Order confirmed!');
+                        alert('Your order is confirmed!');
                     }
-
-                    
                 },
                 showAsc: function (key) {
                     this.showDefault = true;
