@@ -3,81 +3,81 @@ const lessons = [
         id: 100,
         title: "Computer Programming",
         location: "Hendon",
-        price: 100,
+        price: 500,
         image: "pic/coding.png",
-        availableInventory: 5
+        availableInventory: 10
     },
     {
         id: 101,
         title: "Math",
-        location: "America",
-        price: 300,
+        location: "Ashford",
+        price: 650,
         image: "pic/math.png",
-        availableInventory: 5
+        availableInventory: 8
     },
     {
         id: 102,
         title: "Science",
-        location: "Nepal",
-        price: 200,
+        location: "Oxford",
+        price: 500,
         image: "pic/science.png",
-        availableInventory: 5
+        availableInventory: 6
     },
     {
         id: 103,
         title: "Astronomy",
-        location: "UK",
-        price: 150,
+        location: "Portsmouth",
+        price: 850,
         image: "pic/astronomy.png",
         availableInventory: 5
     },
     {
         id: 104,
         title: "Health",
-        location: "UK",
-        price: 150,
+        location: "Reading",
+        price: 550,
         image: "pic/health.png",
-        availableInventory: 5
+        availableInventory: 12
     },
     {
         id: 105,
         title: "Business",
-        location: "UK",
-        price: 150,
+        location: "Cambridge",
+        price: 200,
         image: "pic/business.png",
-        availableInventory: 5
+        availableInventory: 10
     },
     {
         id: 106,
         title: "Accounting",
-        location: "UK",
-        price: 150,
+        location: "Aldershot",
+        price: 250,
         image: "pic/accounting.png",
-        availableInventory: 5
+        availableInventory: 11
     },
     {
         id: 107,
         title: "Sports",
-        location: "UK",
-        price: 150,
+        location: "Swansea",
+        price: 200,
         image: "pic/sports.png",
-        availableInventory: 5
+        availableInventory: 7
     },
     {
         id: 108,
         title: "Engineering",
-        location: "UK",
-        price: 150,
+        location: "London",
+        price: 400,
         image: "pic/engineering.png",
         availableInventory: 5
     },
     {
         id: 109,
         title: "Culinary",
-        location: "UK",
-        price: 150,
+        location: "Brighton",
+        price: 300,
         image: "pic/culinary.png",
-        availableInventory: 5
+        availableInventory: 15
     },
    
     
