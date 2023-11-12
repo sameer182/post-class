@@ -1,5 +1,5 @@
 # post-school-course
-This is our Bridge Course Store App
+This is our Bridge Course Store App (Web Mobile App Development CW1)
 
 Link to the repository: https://github.com/sameer182/post-school-course.git
 
