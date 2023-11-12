@@ -92,6 +92,7 @@
 
                     </div>
                 </div>
+                <!-- Customer form inputs for ordering -->
                     <footer class="custom-footer">
                         <div class="form-box">
                             <div class="input-box">
@@ -109,6 +110,7 @@
                         
                         </div>
                     </footer> 
+                    <!-- Order information -->
                         <div class="order-info">
                             <h2><b>Order Information</b></h2>
                             <p><b>Full Name :</b> {{name}}</p>
@@ -119,6 +121,7 @@
 
     </div>
 
+<!-- Vue.js application -->
  <script type="module">
     import lessons from './lessons.js';
 
@@ -174,6 +177,7 @@
                 showArrowIcon() {
                     return this.showArrow;
                 },
+                //search using title and location
                 searchProducts: function () {
                     const searchTextLower = this.searchText.toLowerCase();
                     return this.products.filter(item => {
@@ -204,7 +208,7 @@
                 canAddToCart: function (item) {
                     return item.availableInventory > 0;
                 },
-
+               //Sorting direction for the specified key
                 sortBy: function (key) {
                     const direction = this.sortDirection[key];
                     if (key === "title") {
@@ -223,6 +227,7 @@
                           (a.availableInventory - b.availableInventory) * direction
                         ); 
                     }
+                    //Toggle the sorting direction  
                     this.sortDirection[key] = -direction;
                 },
                 submitOrder: function () {
