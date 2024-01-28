@@ -121,131 +121,196 @@
 
         </div>
 
-<!-- Vue.js application -->
- <script type="module">
-    import lessons from './lessons.js';
-
-    new Vue({
-            el: "#app",
-            data: {
-                sortDirection: {
-                    title: 1,
-                    location: 1,
-                    price: 1,
-                    seat: 1,
+    <!-- Vue.js application -->
+    <script type="module">
+        new Vue({
+                el: "#app",
+                data: {
+                    sortDirection: {
+                        title: 1,
+                        location: 1,
+                        price: 1,
+                        seat: 1,
+                    },
+                    sitename: "Bridge Course Store",
+                    showProduct: true,
+                    products: [],
+                    name: '',
+                    phoneNumber: '',
+                    showArrow: true,
+                    showDefault: false,
+                    searchText: '',
+                    cart: [],
+                    order: {}
+                    
                 },
-                sitename: "Bridge Course Store",
-                showProduct: true,
-                products: lessons,
-                name: '',
-                phoneNumber: '',
-                showArrow: true,
-                showDefault: false,
-                searchText: '',
-                cart: [],
-            },
-            computed: {
-                cartItemsWithQuantity: function () {
-                    const cartItemsWithQuantity = [];
-                    this.cart.forEach((item) => {
-                        const existingItem = cartItemsWithQuantity.find((cartItem) => cartItem.item.id === item.id);
-                        if (existingItem) {
-                            existingItem.quantity++;
-                        } else {
-                            cartItemsWithQuantity.push({ item: item, quantity: 1 });
+                computed: {
+                    cartItemsWithQuantity: function () {
+                        const cartItemsWithQuantity = [];
+                        this.cart.forEach((item) => {
+                            const existingItem = cartItemsWithQuantity.find((cartItem) => cartItem.item.id === item.id);
+                            if (existingItem) {
+                                existingItem.quantity++;
+                            } else {
+                                cartItemsWithQuantity.push({ item: item, quantity: 1 });
+                            }
+                        });
+                        return cartItemsWithQuantity;
+                    },
+                    showCheckoutButton() {
+                        return this.cart.length > 0;
+                    },
+                    itemsInCart: function () {
+                        return this.cart.length || "";
+                    },
+                    checkInput: function () {
+                        const namePattern = /^[a-zA-Z ]+$/;
+                        return namePattern.test(this.name);
+                    },
+                    checkPhoneInput: function () {
+                        const phonePattern = /^[\d]{10}$/;
+                        return phonePattern.test(this.phoneNumber);
+                    },
+                    isFormValid: function () {
+                        return this.checkInput && this.checkPhoneInput;
+                    },
+                    showArrowIcon() {
+                        return this.showArrow;
+                    },
+                    //search using title and location
+                    searchProducts: function () {
+                        const searchTextLower = this.searchText.toLowerCase();
+                        return this.products.filter(item => {
+                            const titleLower = item.title.toLowerCase();
+                            const locationLower = item.location.toLowerCase();
+                        return titleLower.includes(searchTextLower) || locationLower.includes(searchTextLower);
+                        });
+                    }
+
+                },
+                methods: {
+                    showCheckout: function () {
+                        this.showProduct = this.showProduct ? false : true;
+                    },
+                    addItemToCart: function (item) {
+                        if (item.availableInventory >= 1) {
+                            this.cart.push(item);
+                            item.availableInventory -= 1;
                         }
-                    });
-                    return cartItemsWithQuantity;
-                },
-                showCheckoutButton() {
-                    return this.cart.length > 0;
-                },
-                itemsInCart: function () {
-                    return this.cart.length || "";
-                },
-                checkInput: function () {
-                    const namePattern = /^[a-zA-Z ]+$/;
-                    return namePattern.test(this.name);
-                },
-                checkPhoneInput: function () {
-                    const phonePattern = /^[\d]{10}$/;
-                    return phonePattern.test(this.phoneNumber);
-                },
-                isFormValid: function () {
-                    return this.checkInput && this.checkPhoneInput;
-                },
-                showArrowIcon() {
-                    return this.showArrow;
-                },
-                //search using title and location
-                searchProducts: function () {
-                    const searchTextLower = this.searchText.toLowerCase();
-                    return this.products.filter(item => {
-                        const titleLower = item.title.toLowerCase();
-                        const locationLower = item.location.toLowerCase();
-                    return titleLower.includes(searchTextLower) || locationLower.includes(searchTextLower);
-                    });
-                }
+                    },
+                    removeItemFromCart: function (index) {
+                        const removedItem = this.cart.splice(index, 1)[0];
+                        removedItem.availableInventory += 1;
+                        if (this.cart.length == 0){
+                            this.showProduct = true;
+                        }
+                    },
+                    canAddToCart: function (item) {
+                        return item.availableInventory > 0;
+                    },
+                //Sorting direction for the specified key
+                    sortBy: function (key) {
+                        const direction = this.sortDirection[key];
+                        if (key === "title") {
+                            this.products.sort((a, b) =>
+                                (a.title > b.title ? 1 : -1) * direction
+                            );
+                        } else if (key === "location") {
+                            this.products.sort((a, b) =>
+                                (a.location > b.location ? 1 : -1) * direction
+                            );
+                        } else if (key === "price") {
+                            this.products.sort((a, b) => 
+                            (a.price - b.price) * direction);
+                        } else if (key === "seat") {
+                            this.products.sort((a, b) => 
+                            (a.availableInventory - b.availableInventory) * direction
+                            ); 
+                        }
+                        //Toggle the sorting direction  
+                        this.sortDirection[key] = -direction;
+                    },
 
-            },
-            methods: {
-                showCheckout: function () {
-                    this.showProduct = this.showProduct ? false : true;
+                    submitOrder: function() {
+                    this.order.name = this.name;
+                    this.order.phoneNumber = this.phoneNumber;
+                    this.order.id = this.cartItemsWithQuantity.map(a => a.item.id);
+                    this.order.spaces = this.cartItemsWithQuantity.map(item => item.quantity);
+                    fetch('http://localhost:4001/submit-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.order)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Order submitted:', data);
+                        return fetch('http://localhost:4001/collections/lessons', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ id: this.order.id, spaces: this.order.spaces })
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        this.products = data;
+                        if (window.confirm('Order submitted successfully!')) {
+                            if (window.confirm('Continue shopping, have a nice day! :).')) {
+                                location.reload();
+                            }
+                        } 
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        window.alert('Error submitting order.');
+                    });
                 },
-                addItemToCart: function (item) {
-                    if (item.availableInventory >= 1) {
-                        this.cart.push(item);
-                        item.availableInventory -= 1;
-                    }
+
+                    showAsc: function (key) {
+                        this.showDefault = true;
+                        if (this.sortDirection[key] == 1) {
+                            this.showArrow = true;
+                        } else {
+                            this.showArrow = false;
+                        }
+                    },
+            //         search: function () {
+            //     fetch(`http://localhost:4001/lessons/search?q=${this.searchText}`)
+            //         .then(response => response.json())
+            //         .then(data => this.products = data)
+            //         .catch(err => console.error('Error:', err));
+            // },
                 },
-                removeItemFromCart: function (index) {
-                    const removedItem = this.cart.splice(index, 1)[0];
-                    removedItem.availableInventory += 1;
-                    if (this.cart.length == 0){
-                        this.showProduct = true;
-                    }
-                },
-                canAddToCart: function (item) {
-                    return item.availableInventory > 0;
-                },
-               //Sorting direction for the specified key
-                sortBy: function (key) {
-                    const direction = this.sortDirection[key];
-                    if (key === "title") {
-                        this.products.sort((a, b) =>
-                            (a.title > b.title ? 1 : -1) * direction
-                        );
-                    } else if (key === "location") {
-                        this.products.sort((a, b) =>
-                            (a.location > b.location ? 1 : -1) * direction
-                        );
-                    } else if (key === "price") {
-                        this.products.sort((a, b) => 
-                        (a.price - b.price) * direction);
-                    } else if (key === "seat") {
-                        this.products.sort((a, b) => 
-                          (a.availableInventory - b.availableInventory) * direction
-                        ); 
-                    }
-                    //Toggle the sorting direction  
-                    this.sortDirection[key] = -direction;
-                },
-                submitOrder: function () {
-                    if (this.isFormValid) {
-                        alert('Your order is confirmed!');
-                    }
-                },
-                showAsc: function (key) {
-                    this.showDefault = true;
-                    if (this.sortDirection[key] == 1){
-                        this.showArrow = true;
-                    } else{
-                        this.showArrow = false;
-                    }
-                },
+        //         watch: {
+        //     // Watch for changes in searchText and trigger the search method
+        //     searchText: function () {
+        //         this.search();
+        //     },
+        // },
+                created: function () {
+                fetch('http://localhost:4001/collections/lessons')
+                    .then(response => response.json())
+                    .then(data => this.products = data)
+                    .catch(err => console.error('Error:', err));
 
             }
-      })
-  </script>
-</body>
-</html>
+                // created: async function () {
+                //         try {
+                //             const response = await fetch('http://localhost:4001/collections/lessons');
+                //             if (!response.ok) {
+                //                 throw new Error(`HTTP error! Status: ${response.status}`);
+                //             }
+                //             const data = await response.json();
+                //             this.products = data;
+                //         } catch (error) {
+                //             console.error('Error:', error);
+                //         }
+                //     },
+
+        })
+    </script>
+    </body>
+    </html>
