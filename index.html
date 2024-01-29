@@ -59,7 +59,7 @@
                     <div v-for="item in products" class="product-box">
                         <div>
                             <figure>
-                                <img v-bind:src=" 'http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/' + item.image" alt="Book pic" style="max-width: 40%; height: auto;">
+                                <img v-bind:src=" 'https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/' + item.image" alt="Book pic" style="max-width: 40%; height: auto;">
                             </figure>
                             
                             <h4>{{item.title}}</h4>
@@ -81,7 +81,7 @@
                     <div v-for="(cartItem, index) in cartItemsWithQuantity" :key="index" class="product-box1">
                         <div>
                             <figure>
-                                <img v-bind:src="'http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/' + cartItem.item.image" alt="Book pic" style="max-width: 40%; height: auto;">
+                                <img v-bind:src="'https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/' + cartItem.item.image" alt="Book pic" style="max-width: 40%; height: auto;">
                             </figure>
 
                             <h4>{{cartItem.item.title}}</h4>
@@ -227,7 +227,7 @@
                         this.order.phoneNumber = this.phoneNumber;
                         this.order.id = this.cartItemsWithQuantity.map(a => a.item.id);
                         this.order.spaces = this.cartItemsWithQuantity.map(item => item.quantity);
-                        fetch('http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/submit-order', {
+                        fetch('https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/submit-order', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -237,7 +237,7 @@
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Order submitted:', data);
-                                return fetch('http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons', {
+                                return fetch('https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons', {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json'
@@ -271,13 +271,13 @@
                         const key = this.searchText.toLowerCase().trim();
                         if (key === "") {
                             //Fetch all products when the search query is empty
-                            fetch('http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons')
+                            fetch('https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons')
                                 .then(response => response.json())
                                 .then(data => this.products = data)
                                 .catch(err => console.error('Error:', err));
                         } else {
                             //Sends the search query to the server
-                            fetch(`http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/lessons/search/${key}`)
+                            fetch(`https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/lessons/search/${key}`)
                                 .then(response => response.json())
                                 .then(data => this.products = data)
                                 .catch(err => console.error('Error:', err));
@@ -295,7 +295,7 @@
             },
             //Fetch function to retreive data from the server
             created: function () {
-                fetch('http://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons')
+                fetch('https://post-school-env.eba-ezt3sksp.eu-west-2.elasticbeanstalk.com/collections/lessons')
                     .then(response => response.json())
                     .then(data => this.products = data)
                     .catch(err => console.error('Error:', err));
