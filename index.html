@@ -177,16 +177,6 @@
                     showArrowIcon() {
                         return this.showArrow;
                     },
-                    //search using title and location
-                    // searchProducts: function () {
-                    //     const searchTextLower = this.searchText.toLowerCase();
-                    //     return this.products.filter(item => {
-                    //         const titleLower = item.title.toLowerCase();
-                    //         const locationLower = item.location.toLowerCase();
-                    //     return titleLower.includes(searchTextLower) || locationLower.includes(searchTextLower);
-                    //     });
-                    // }
-                  
 
                 },
                 methods: {
@@ -231,7 +221,7 @@
                         //Toggle the sorting direction  
                         this.sortDirection[key] = -direction;
                     },
-
+                    //Fetch functions that saves new order with POST when submitted and PUT method that updates the available space
                     submitOrder: function () {
                         this.order.name = this.name;
                         this.order.phoneNumber = this.phoneNumber;
@@ -276,16 +266,17 @@
                             this.showArrow = false;
                         }
                     },
+                    //Search products using the webservice
                     searchProducts() {
                         const key = this.searchText.toLowerCase().trim();
                         if (key === "") {
-                            // Fetch all products when the search query is empty
+                            //Fetch all products when the search query is empty
                             fetch('http://localhost:4001/collections/lessons')
                                 .then(response => response.json())
                                 .then(data => this.products = data)
                                 .catch(err => console.error('Error:', err));
                         } else {
-                            // Send the search query to the server
+                            //Sends the search query to the server
                             fetch(`http://localhost:4001/lessons/search/${key}`)
                                 .then(response => response.json())
                                 .then(data => this.products = data)
@@ -294,33 +285,22 @@
                     }
 
                 },
-                watch: {
-                // Watch for changes in searchText and trigger the searchProducts method
+            watch: {
+                //Watch for changes in searchText and triggers the searchProducts method
                 searchText: function (newText, oldText) {
                     if (newText !== oldText) {
                         this.searchProducts();
                     }
                 },
             },
-                created: function () {
+            //Fetch function to retreive data from the server
+            created: function () {
                 fetch('http://localhost:4001/collections/lessons')
                     .then(response => response.json())
                     .then(data => this.products = data)
                     .catch(err => console.error('Error:', err));
 
             }
-                // created: async function () {
-                //         try {
-                //             const response = await fetch('http://localhost:4001/collections/lessons');
-                //             if (!response.ok) {
-                //                 throw new Error(`HTTP error! Status: ${response.status}`);
-                //             }
-                //             const data = await response.json();
-                //             this.products = data;
-                //         } catch (error) {
-                //             console.error('Error:', error);
-                //         }
-                //     },
 
         })
     </script>
