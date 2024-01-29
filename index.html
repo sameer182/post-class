@@ -56,7 +56,7 @@
             <!-- Main view of the page -->
             <main>
                 <div class="product-container" v-if="showProduct">
-                    <div v-for="item in searchProducts" class="product-box">
+                    <div v-for="item in products" class="product-box">
                         <div>
                             <figure>
                                 <img v-bind:src="'http://localhost:4001/' + item.image" alt="Book pic" style="max-width: 40%; height: auto;">
@@ -178,14 +178,15 @@
                         return this.showArrow;
                     },
                     //search using title and location
-                    searchProducts: function () {
-                        const searchTextLower = this.searchText.toLowerCase();
-                        return this.products.filter(item => {
-                            const titleLower = item.title.toLowerCase();
-                            const locationLower = item.location.toLowerCase();
-                        return titleLower.includes(searchTextLower) || locationLower.includes(searchTextLower);
-                        });
-                    }
+                    // searchProducts: function () {
+                    //     const searchTextLower = this.searchText.toLowerCase();
+                    //     return this.products.filter(item => {
+                    //         const titleLower = item.title.toLowerCase();
+                    //         const locationLower = item.location.toLowerCase();
+                    //     return titleLower.includes(searchTextLower) || locationLower.includes(searchTextLower);
+                    //     });
+                    // }
+                  
 
                 },
                 methods: {
@@ -231,43 +232,41 @@
                         this.sortDirection[key] = -direction;
                     },
 
-                    submitOrder: function() {
-                    this.order.name = this.name;
-                    this.order.phoneNumber = this.phoneNumber;
-                    this.order.id = this.cartItemsWithQuantity.map(a => a.item.id);
-                    this.order.spaces = this.cartItemsWithQuantity.map(item => item.quantity);
-                    fetch('http://localhost:4001/submit-order', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(this.order)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Order submitted:', data);
-                        return fetch('http://localhost:4001/collections/lessons', {
-                            method: 'PUT',
+                    submitOrder: function () {
+                        this.order.name = this.name;
+                        this.order.phoneNumber = this.phoneNumber;
+                        this.order.id = this.cartItemsWithQuantity.map(a => a.item.id);
+                        this.order.spaces = this.cartItemsWithQuantity.map(item => item.quantity);
+                        fetch('http://localhost:4001/submit-order', {
+                            method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ id: this.order.id, spaces: this.order.spaces })
-                        });
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        this.products = data;
-                        if (window.confirm('Order submitted successfully!')) {
-                            if (window.confirm('Continue shopping, have a nice day! :).')) {
-                                location.reload();
-                            }
-                        } 
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        window.alert('Error submitting order.');
-                    });
-                },
+                            body: JSON.stringify(this.order)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Order submitted:', data);
+                                return fetch('http://localhost:4001/collections/lessons', {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ id: this.order.id, spaces: this.order.spaces })
+                                });
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                this.products = data;
+                                if (window.confirm('Order submitted successfully! Thankyou :)')) {
+                                    location.reload();
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error:', err);
+                                window.alert('Error submitting order.');
+                            });
+                    },
 
                     showAsc: function (key) {
                         this.showDefault = true;
@@ -277,19 +276,34 @@
                             this.showArrow = false;
                         }
                     },
-            //         search: function () {
-            //     fetch(`http://localhost:4001/lessons/search?q=${this.searchText}`)
-            //         .then(response => response.json())
-            //         .then(data => this.products = data)
-            //         .catch(err => console.error('Error:', err));
-            // },
+                    searchProducts() {
+                        const key = this.searchText.toLowerCase().trim();
+                        if (key === "") {
+                            // Fetch all products when the search query is empty
+                            // Replace with your actual API endpoint
+                            fetch('http://localhost:4001/collections/lessons')
+                                .then(response => response.json())
+                                .then(data => this.products = data)
+                                .catch(err => console.error('Error:', err));
+                        } else {
+                            // Send the search query to the server
+                            // Replace with your actual API endpoint
+                            fetch(`http://localhost:4001/lessons/search?q=${key}`)
+                                .then(response => response.json())
+                                .then(data => this.products = data)
+                                .catch(err => console.error('Error:', err));
+                        }
+                    }
+
                 },
-        //         watch: {
-        //     // Watch for changes in searchText and trigger the search method
-        //     searchText: function () {
-        //         this.search();
-        //     },
-        // },
+                watch: {
+                // Watch for changes in searchText and trigger the searchProducts method
+                searchText: function (newText, oldText) {
+                    if (newText !== oldText) {
+                        this.searchProducts();
+                    }
+                },
+            },
                 created: function () {
                 fetch('http://localhost:4001/collections/lessons')
                     .then(response => response.json())
