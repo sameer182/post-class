@@ -280,15 +280,13 @@
                         const key = this.searchText.toLowerCase().trim();
                         if (key === "") {
                             // Fetch all products when the search query is empty
-                            // Replace with your actual API endpoint
                             fetch('http://localhost:4001/collections/lessons')
                                 .then(response => response.json())
                                 .then(data => this.products = data)
                                 .catch(err => console.error('Error:', err));
                         } else {
                             // Send the search query to the server
-                            // Replace with your actual API endpoint
-                            fetch(`http://localhost:4001/lessons/search?q=${key}`)
+                            fetch(`http://localhost:4001/lessons/search/${key}`)
                                 .then(response => response.json())
                                 .then(data => this.products = data)
                                 .catch(err => console.error('Error:', err));
